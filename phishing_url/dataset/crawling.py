@@ -1,21 +1,22 @@
-# 라이브러리 준비하기
-import csv
-import requests
-from bs4 import BeautifulSoup
-import cloudscraper
+# # 라이브러리 준비하기
+# import csv
+# import requests
+# from bs4 import BeautifulSoup
+# import cloudscraper
 
-cookies = {'cf_clearance' : ' PHPSESSID=volt1s7neq33apv1mjrjcf65bumjoung'}
-header = {'User-agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
-url ="https://www.phishtank.com/phish_archive.php"
-response = requests.get(url, headers=header, cookies = cookies)
+# cookies = {'cf_clearance' : ' PHPSESSID=volt1s7neq33apv1mjrjcf65bumjoung'}
+# header = {'User-agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+# url ="https://www.phishtank.com/phish_detail.php?phish_id=8422170"
+# response = requests.get(url, headers=header, cookies = cookies)
 
-html = response.text
-soup = BeautifulSoup(html, "html.parser")
+# html = response.text
+# print(html)
+# soup = BeautifulSoup(html, "html.parser")
 
-words = soup.select_one("h1")
-print(words)
-for word in words:
-    print(word.text)
+# words = soup.select_one("h1")
+# print(words)
+# for word in words:
+#     print(word.text)
 
 # ---------------------------------------------------------------------
 # v2
@@ -100,3 +101,51 @@ for word in words:
 
 # https://phpschool.com/gnuboard4/bbs/board.php?bo_table=qna_function&wr_id=444023&sfl=wr_subject%7C%7Cwr_content&stx=curl+fsockopen&sst=wr_hit&sod=desc&sop=or&page=4%29
 # https://gist.github.com/yasinkuyu/bb3e1abe15ebdc099201724f4cbd2100 
+
+# -------------------------------------------------------------------
+
+# import cloudscraper
+# from bs4 import BeautifulSoup
+
+# scraper = cloudscraper.create_scraper()  # Cloudscraper 인스턴스 생성
+# scraper.headers.update({
+#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+# })
+# url = "https://www.phishtank.com/phish_search.php"
+# info = scraper.get(url)
+# print(info.status_code)
+
+
+# html = scraper.get(url).text  # 웹페이지 가져오기
+
+# soup = BeautifulSoup(html, "html.parser")
+# words = soup.select("td:nth-child(2)")  # 셀렉터 검토 필요
+# for word in words:
+#     print(word.text)
+
+
+# --------------------------------------------------------
+
+from zenrows import ZenRowsClient
+
+client = ZenRowsClient("e59b15ba65ee8f944947f6f230cfaf4fb734f599")
+url = "https://www.phishtank.com/phish_search.php&wait_for=.background-load"  # JavaScript rendering 옵션을 URL에 포함
+
+response = client.get(url)
+
+print(response.text)
+
+# import requests
+# response_specific = requests.get("https://api.zenrows.com/v1/?apikey=e59b15ba65ee8f944947f6f230cfaf4fb734f599&url=https%3A%2F%2Fwww.phishtank.com%2Fphish_search.php&js_render=true&wait_for=.content") 
+# print(response_specific.text)
+
+# response_specific = requests.get("https://api.zenrows.com/v1/?apikey=e59b15ba65ee8f944947f6f230cfaf4fb734f599&url=https%3A%2F%2Fwww.phishtank.com%2Fphish_detail.php?phish_id=8422170&js_render=true&wait_for=.content") 
+# print(response_specific.text)
+
+# ------------------------------------------------------------
+
+# import undetected_chromedriver as uc 
+# driver = uc.Chrome() 
+# response = driver.get('https://www.phishtank.com/phish_search.php')
+# print(response.text)
+
