@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 # 크롤링할 대상 사이트 URL
 base_url = 'https://phishtank.org/'
-search_url = 'phish_search.php?page={}&valid=y&active=y&Search=Search'
+search_url = 'phish_search.php?page={}&valid=n&active=All&Search=Search'
 
 # 각 게시물 페이지에서 실제 피싱 링크를 추출하는 함수
 def extract_link(post_url):
@@ -66,5 +66,5 @@ def save_to_csv(data, filename='phishing_links.csv'):
 # 크롤링 실행 및 CSV 파일로 저장
 
 extracted_data = crawl_phish_tank(0, 100)
-save_to_csv(extracted_data, 'phishing_url.csv')
+save_to_csv(extracted_data, 'normal_url.csv')
 print(f"success")
