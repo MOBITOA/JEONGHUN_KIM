@@ -6,11 +6,13 @@
 1. ARP-Spoofing
 2. Port-Scan
 3. OS-Scan
-4. UDP-Flooding
-5. ACK-Flooding
-6. HTTP-Flooding
-7. Host-bruteforce
-8. URL-Phishing
+4. Dos Attack
+5. TCP-Flooding
+6. UDP-Flooding
+7. ICMP-Flooding
+8. HTTP-Flooding
+9. Host-bruteforce
+10. URL-Phishing
 
 
 ## 1. ARP-Spoofing
@@ -33,6 +35,11 @@
 **포트 스캔(port scan)** 은 운영 중인 서버에서 열려있는 TCP/UDP 포트를 검색하는 것을 의미하며,  
 다른 말로는 해당 네트워크를 돌면서 살아있는 호스트, 포트를 찾는 것을 의미하는 **Sweep**이라 불리기도 한다.
 
+**보통 공격 대상을 결정하거나 공격 방법을 결정할 때 네트워크 구조, 시스템이 제공하는 서비스 정보를 얻기 위해 수행됨.**
+- ### Port-scan으로 확인할 수 있는 것
+   1. 공격 대상 보안장비 사용현황
+   2. 우회 가능 네트워크
+      
 - ### Port-Scan 증상
    1. 네트워크 성능 저하가 발생할 수 있음 (네트워크 트래픽의 이상한 증가)
    2. 로그 확대 - 대량의 접근 시도를 기록하여 로그 파일의 크기가 커진다.
@@ -46,16 +53,115 @@
 ## 3. OS-Scan
 **운영 체제 스캔(OS Scan)** 은 특정 호스트의 운영 체제를 식별하려는 공격 형태다.  
 공격자가 대상 시스템에 대해 추가 정보를 수집하여 취약점을 찾고, 특정 운영 체제 특화 공격을  
-하기 위해 사용된다.
+하기 위해 사용된다. 
+
+**스캔의 한 영역일 뿐 증상이나 탐지같은 경우 다른 SCAN들과 매우 유사함**
+
+> 스캔 참고 - https://velog.io/@p-jina/SK-shieldus-Rookies-16%EA%B8%B0-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EB%B3%B4%EC%95%88-Port-Scan-%EA%B3%B5%EA%B2%A9%EA%B3%BC-%ED%8C%A8%ED%82%B7-%EB%B6%84%EC%84%9D
 
 
-## 4. UDP-Flooding
 
-## 5. ACK-Flooding
 
-## 6. HTTP-Flooding
 
-## 7. Host-bruteforce
+## 4. Dos Attack
+### 4.1. 대응 방법
+#### 4.1.1. 임계치 설정
+공격이 발생할 수 있는 패킷의 통계적 수치를 조사하는 방법.
+
+특정 유형의 패킷을 다량 전송하는 공격은 일정 시간 내 전송된 같은 유형의 패킷 수를 카운트해서 감지 가능.
+    - 단점
+        - 대용량 데이터 전송 같은 서비스가 차단될 우려가 있음
+        - 완전한 해결책은 아님 (카운트도 자원을 소모함)
+
+느린 전송을 이용하는 공격은 timeout등을 이용하여 감지 가능.
+    - 단점
+        - 느린 환경에서 접속하는 기기를 차단할 수 있음
+
+
+#### 4.1.2. 인증
+특히 정상 사용자와 봇을 구분하기 위한 방법이 많다.
+- TCP SYN 패킷에 쿠키를 추가해 SYN, ACK 응답에서 쿠키 포함 확인
+- HTTP 302 응답코드를 통해 REDIRECT가 일어나는지 확인
+- 응답 패턴 분석
+    - CAPTCHA는 응답 시간, 응답 유형을 보고 정상 사용자 구분
+        - 패턴 분석에서 AI 사용 가능
+
+
+### 4.2. 한계
+위와 같은 대응법은 대상 컴퓨터의 성능으로 감당할 수 없는 대용량 공격에 대해서 대응이 어렵다.
+필터가 버퍼 역할을 해서 라우터가 감당할 수 없는 대용량 공격을 감지하고 Fragmentation을 진행하거나 차단하는 수단이 가능하면 좋을 거 같다.
+
+
+
+
+
+## 5. TCP-Flooding
+TCP는 연결지향성 프로토콜이기 때문에, 전송에서의 신뢰성을 위해 handshaking을 진행한다. 진행 과정은 아래와 같다.
+1. Client > (SYN) > Server
+2. Server > (SYN, ACK) > Client
+3. Client > (ACK) > Server
+
+### 5.1. TCP SYN Flooding
+TCP 3-way handshaking 과정을 이용한 공격이다. 과정은 아래와 같다.
+1. 공격자가 대상에게 TCP SYN 패킷을 전송 
+2. 대상이 보내오는 TCP SYN, ACK 패킷을 무시
+3. 대상은 TCP ACK 패킷을 기다리며 Backlog Queue를 점유
+4. (1)~(2) 과정을 다량으로 반복
+5. 대상의 Backlog Queue를 가득 채워 다른 접속을 무시시키는 방법.
+   
+### 5.2. TCP RST Flooding
+공격자가 변조된 무작위 IP/Port로 RST(TCP 세션 종료)패킷을 보내 실제 사용중인 연결을 끊는 공격.
+
+### 5.3. TCP XMAS Flooding
+공격자가 대상에게 TCP ACK/FIN/NULL/PSH/RST 패킷을 다량으로 전송해 해당 패킷을 처리하기 위해 자원을 소모해 서비스를 마비시키는 공격.
+
+
+
+
+
+## 6. UDP-Flooding
+UDP는 TCP와 다르게 전송에서의 신뢰성을 중요하게 여기지 않고 CheckSum 정도만 확인한다. 데이터 전송 여부를 검사하지 않는다.
+위와 같은 이유로 UDP는 TCP 보다 빠른 통신 속도를 가지고, streaming 같은 실시간 서비스에 자주 이용된다.
+
+### 6.1. UDP Flooding
+공격자가 대상에게 다량의 UDP 패킷을 전송해 대상의 대역폭을 소모시키는 공격. 주로 echo 등의 서비스를 통해 진행
+
+
+
+
+
+## 7. ICMP-Flooding
+### 7.1. Ping of Death
+공격자가 정상보다 아주 큰 크기의 ICMP 패킷을 보내 대상의 자원을 소모시키는 공격.
+1. 공격자가 아주 큰 ICMP 패킷을 대상에게 전송
+2. ICMP 패킷은 Fragmentation으로 인해 다수의 패킷으로 분할
+3. 대상은 Reassembly 과정에서 다량의 자원을 소모해 타 서비스 마비
+
+
+
+
+
+## 8. HTTP-Flooding
+### 8.1. HTTP GET flooding (Hulk)
+공격자가 대상에게 URL GET 요청을 대량으로 반복 수행해서 서비스를 마비시키는 공격.
+
+### 8.2. RUDY (R U Dead Yet?)
+1. 공격자가 대상에게 Content-Length가 아주 큰 POST(리소스 전송) 요청
+2. 공격자가 대상에게 실제 데이터를 아주 작고 천천히 전송
+3. 대상은 연결 상태를 유지하며 자원을 소모해 타 서비스에 지장
+
+### 8.3. Slowloris
+HTTP Header를 조작하여 대상의 자원을 소모시키는 공격.
+1. 공격자가 대상에게 HTTP Header를 전송
+2. Header의 끝을 알리는 문자(CRLF 2번)를 의도적으로 전송하지 않는다
+3. 천천히 불필요한 Header를 계속 전송한다
+4. 대상은 연결 상태를 유지하느라 자원을 소모해 타 서비스에 지장
+
+
+
+
+
+## 9. Host-bruteforce
 **Host Bruteforce**는 계정 로그인을 위한 정보(비밀번호)를 알기 위해 수행하는 공격으로, 가능한 문자의 조합을 이용해 로그인을 시도하는 방법이다.
 
 - ### Host-bruteforce 증상
@@ -66,8 +172,12 @@
   1. 특정 프로토콜(HTTP:80포트)에 대한 트래픽이 비정상적으로 높을 경우 브루트 포스 공격 의심 가능
   2. 연속된 로그인 실패 패턴 분석
   3. 알려진 브루트 포스 공격 시그니처 또는 특정 휴리스틱 규칙을 기반으로 트래픽을 분석
+
+
+
+
    
-## 8. URL-Phishing
+## 10. URL-Phishing
 **URL-Phishing**은 공격자가 악의적인 웹사이트로 접속하도록 유도하여 접속자의 개인 정보나 금전을 공유하도록 하는 기법
 
 - ### URL-Phishing 증상 (휴대전화)
