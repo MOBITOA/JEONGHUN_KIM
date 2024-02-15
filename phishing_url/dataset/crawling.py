@@ -24,9 +24,9 @@ def extract_link(post_url):
                         link_text = b_element.text.strip()
                         # Cloudflare Email Protection 확인
                         if '[email protected]' in link_text:
-                            return None  # 이메일 포함된 링크는 건너뜁니다
+                            return link_text  # 이메일 포함된 링크는 건너뜁니다
                         else:
-                            return link_text
+                            return None
     return None
 
 # 페이지마다 게시물을 크롤링하는 함수
@@ -65,6 +65,6 @@ def save_to_csv(data, filename='phishing_links.csv'):
 
 # 크롤링 실행 및 CSV 파일로 저장
 
-extracted_data = crawl_phish_tank(0, 100)
-save_to_csv(extracted_data, 'phishing_url.csv')
+extracted_data = crawl_phish_tank(0, 10)
+save_to_csv(extracted_data, 'phishing_url2.csv')
 print(f"success")
