@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import csv
 
 # 크롤링할 대상 사이트 URL
 base_url = 'https://phishtank.org/'
@@ -30,10 +31,11 @@ def extract_link(post_url):
     return None
 
 
-
 # 페이지마다 게시물을 크롤링하는 함수
 def crawl_phish_tank(start_page, end_page):
     num = 0
+    extracted_links = []
+
     for page in range(start_page, end_page + 1):
         url = urljoin(base_url, search_url.format(page))
         response = requests.get(url)
@@ -47,13 +49,34 @@ def crawl_phish_tank(start_page, end_page):
                 extracted_link = extract_link(post_link)
 
                 if extracted_link:
-                    num += 1
-                    print(f"[+] DATA NUM {num}")
-                    print(f"    |-- Page: {page}")
-                    print(f"    |-- Post Link: {post_link}")
-                    print(f"    |-- Extracted Link: {extracted_link}")
+                    extracted_links.append({
+                        'url': extracted_link
+                    })
         else:
-            print(f"Error {response.status_code}: Failed to retrieve the webpage for page {page}.")
+            print(
+                f"Error {response.status_code}: Failed to retrieve the webpage for page {page}.")
 
-# 크롤링 실행
-crawl_phish_tank(8, 8)
+    return extracted_links
+
+
+# CSV 파일로 저장하는 함수
+def save_to_csv(data, filename='extracted_links.csv', page=None):
+    mode = 'a' if page > 0 else 'w' 
+    header = page == 0
+    
+    with open(filename, mode, newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['Extracted Link']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        if header:
+            writer.writeheader()
+        for item in data:
+            writer.writerow({'Extracted Link': item['url']})
+
+
+for start_page in range(0, ):
+    print(f"start: {start_page}") 
+    extracted_data = crawl_phish_tank(start_page, start_page+1) 
+    save_to_csv(extracted_data, 'test.csv', start_page)
+
+print("추출된 링크가 extracted_links.csv 파일에 저장되었습니다.")
