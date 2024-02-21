@@ -16,3 +16,13 @@ LSTM - Accuracy: 0.50, Precision: 0.50, Recall: 1.00, F1 Score: 0.67
 SVM - Accuracy: 0.77, Precision: 0.76, Recall: 0.81, F1 Score: 0.78
 XGB - Accuracy: 0.84, Precision: 0.85, Recall: 0.83, F1 Score: 0.84
 
+
+[+] 24.2.19
+
+LightGBM - Accuracy: 0.85, Precision: 0.88, Recall: 0.80, F1 Score: 0.84
+Random Forest - Accuracy: 0.86, Precision: 0.89, Recall: 0.82, F1 Score: 0.86
+XGB - Accuracy: 0.85, Precision: 0.88, Recall: 0.82, F1 Score: 0.85
+
+LightGBM - Accuracy: 0.85, Precision: 0.87, Recall: 0.81, F1 Score: 0.84
+Random Forest - Accuracy: 0.86, Precision: 0.88, Recall: 0.82, F1 Score: 0.85
+XGB - Accuracy: 0.85, Precision: 0.87, Recall: 0.82, F1 Score: 0.85
