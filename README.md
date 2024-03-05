@@ -4,15 +4,14 @@
 
 ## 목차
 1. ARP-Spoofing
-2. Port-Scan
-3. OS-Scan
-4. Dos Attack
-5. TCP-Flooding
-6. UDP-Flooding
-7. ICMP-Flooding
-8. HTTP-Flooding
-9. Host-bruteforce
-10. URL-Phishing
+2. Port-Scan - O
+3. OS-Scan - ㅁ
+4. TCP-Flooding - o
+5. UDP-Flooding - o
+6. ICMP-Flooding - 정훈
+7. HTTP-Flooding - 지훈
+8. Host-bruteforce - 준혁
+9. URL-Phishing - O
 
 
 ## 1. ARP-Spoofing
